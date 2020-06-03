@@ -100,6 +100,29 @@ void PRINT(Node* table[], int size) {
   }
 }
 
+void DELETE(Node* hashTable[], int sID, int size) {
+  int num = HVALUE(sID, size);
+  Node* list = hashTable[num];
+  Node* previous = NULL;
+  if (list == NULL) {
+    return; 
+  }
+  while (list != NULL) {
+    if (list -> data -> ID == sID) {
+      if (previous == NULL) {
+	hashTable[num] = NULL;
+      }
+      else {
+        previous -> next = list -> next; 
+      }
+      return; 
+    }
+    previous = list;
+    list = list -> next; 
+  }
+  return; 
+}
+
 int main () {
   char input[50];
   Node** hashTable = new Node*[100];
@@ -115,8 +138,8 @@ int main () {
     if (strcmp(input, "ADD") == 0) {
       int ID;
       float GPA;
-      char* fName;
-      char* lName;
+      char* fName = new char();
+      char* lName = new char();
       cout << "Firstname? \n";
       cin.getline(fName, 20);
       cout << "Lastname? \n";
@@ -140,11 +163,11 @@ int main () {
 	temp -> lName = lName;
 	temp -> ID = ID;
 	temp -> GPA = GPA;
-	int index = hashValue(ID, size);
-	bool valid = (ADD(hashTable, index, temp);
+	int index = HVALUE(ID, size);
+	bool valid = ADD(hashTable, index, temp);
 	if (valid == false) {
           Node** newHash = new Node*[size*2];
-	  REHASH(newNash, hashTable, size);
+	  REHASH(newHash, hashTable, size);
 	  hashTable = newHash; 
 	}
       }
@@ -156,7 +179,12 @@ int main () {
       PRINT(hashTable, size); 
     }
     else if (strcmp(input, "DELETE") == 0) {
-
+      int sID;
+      cout << "Enter Student's ID \n";
+      cin >> sID;
+      cin.get();
+      IDs.push_back(sID);
+      DELETE(hashTable, sID, size); 
     }
     else if (strcmp(input, "EXIT") == 0) {
       exit(0); 

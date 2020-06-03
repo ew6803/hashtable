@@ -138,8 +138,8 @@ int main () {
     if (strcmp(input, "ADD") == 0) {
       int ID;
       float GPA;
-      char* fName;
-      char* lName;
+      char* fName = new char();
+      char* lName = new char();
       cout << "Firstname? \n";
       cin.getline(fName, 20);
       cout << "Lastname? \n";
@@ -163,11 +163,11 @@ int main () {
 	temp -> lName = lName;
 	temp -> ID = ID;
 	temp -> GPA = GPA;
-	int index = hashValue(ID, size);
-	bool valid = (ADD(hashTable, index, temp);
+	int index = HVALUE(ID, size);
+	bool valid = ADD(hashTable, index, temp);
 	if (valid == false) {
           Node** newHash = new Node*[size*2];
-	  REHASH(newNash, hashTable, size);
+	  REHASH(newHash, hashTable, size);
 	  hashTable = newHash; 
 	}
       }
@@ -179,7 +179,12 @@ int main () {
       PRINT(hashTable, size); 
     }
     else if (strcmp(input, "DELETE") == 0) {
-
+      int sID;
+      cout << "Enter Student's ID";
+      cin >> sID;
+      cin.get();
+      IDs.push_back(sID);
+      DELETE(hashTable, sID, size); 
     }
     else if (strcmp(input, "EXIT") == 0) {
       exit(0); 
