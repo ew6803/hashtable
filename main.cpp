@@ -1,5 +1,6 @@
-//ASDFASDFASDFADS
-// Start Monday
+// This program is a hashtable, where the user can add students, delete students, print the students stored, and also generate random students given a list of first and last names seperated by spaces.
+// Ethan Wang
+// 5/30/20
 
 #include <iostream>
 #include <cstring>
@@ -9,10 +10,9 @@
 #include <fstream>
 #include <iomanip>
 #include <time.h>
-#include <stdlib.h>
 
 using namespace std;
-
+// Structs for Students and Nodes that contain them
 struct Student {
   char* fName;
   char* lName;
@@ -25,17 +25,18 @@ struct Node {
   Node* next = NULL; 
 };
 
-bool ADD(Node* hashTable[], int index, Student* s) {
+//Function that adds student, sees if chaining is needed, and sees if table needs to be rehashed
+bool ADD(Node* hashTable[], int index, Student* student) {
   if (hashTable[index] == NULL) {
     Node* temp = new Node();
-    temp -> data = s;
+    temp -> data = student;
     hashTable[index] = temp;
     return true; 
   }
   Node* list = hashTable[index];
   Node* temp  = new Node();
   temp -> next = list;
-  temp -> data = s;
+  temp -> data = student;
   hashTable[index] = temp;
   list = temp;
   int count = 1;
@@ -51,6 +52,7 @@ bool ADD(Node* hashTable[], int index, Student* s) {
   }
 }
 
+//Function to get hash value of ID
 int HVALUE(int ID, int size) {
   int total = 0;
   while (ID != 0) {
@@ -61,6 +63,7 @@ int HVALUE(int ID, int size) {
     return ((total * multiple) % size); 
 }
 
+//Function to Rehash Table
 void REHASH(Node* newHash[], Node* oldHash[], int &size) {
   for (int i = 0; i < (size * 2); i++) {
     newHash[i] = NULL; 
@@ -82,6 +85,7 @@ void REHASH(Node* newHash[], Node* oldHash[], int &size) {
   size = nSize; 
 }
 
+//Prints out current list of contained students
 void PRINT(Node* table[], int size) {
   cout << fixed;
   cout << setprecision(2);
@@ -93,7 +97,7 @@ void PRINT(Node* table[], int size) {
         if (list -> data != NULL) {
 	  cout << "First Name: " << list -> data -> fName << endl;
 	  cout << "Last Name: " << list -> data -> lName << endl;
-	  cout << "Student ID; " << list -> data -> ID << endl;
+	  cout << "Student ID: " << list -> data -> ID << endl;
 	  cout << "GPA: " << list -> data -> GPA << endl; 
 	}
 	list = list -> next; 
@@ -102,6 +106,7 @@ void PRINT(Node* table[], int size) {
   }
 }
 
+//Deletes specified student given Student ID
 void DELETE(Node* hashTable[], int sID, int size) {
   int num = HVALUE(sID, size);
   Node* list = hashTable[num];
@@ -125,6 +130,7 @@ void DELETE(Node* hashTable[], int sID, int size) {
   return; 
 }
 
+//Main Line, UI, Function Caller
 int main () {
   char input[50];
   Node** hashTable = new Node*[100];
@@ -152,14 +158,16 @@ int main () {
       cout << "GPA? \n";
       cin >> GPA;
       cin.get();
+      //Checks to see if duplicate, if not, adds it
       bool rp = false;
-      for (vector<int>:: iterator it = IDs.begin(); it != IDs.end(); it) {
+      for (vector<int>:: iterator it = IDs.begin(); it != IDs.end(); ++it) {
 	if((*it) == ID) {
 	  rp = true; 
 	}
       }
       if (rp == false) {
 	IDs.push_back(ID);
+	//Creates new student
 	Student* temp = new Student();
 	temp -> fName = fName;
 	temp -> lName = lName;
@@ -170,10 +178,15 @@ int main () {
 	if (valid == false) {
           Node** newHash = new Node*[size*2];
 	  REHASH(newHash, hashTable, size);
+	  delete [] hashTable; 
 	  hashTable = newHash; 
 	}
       }
+      else {
+        cout << "Already a student with that ID \n"; 
+      }
     }
+    //Random student generation
     else if (strcmp(input, "GENERATE") == 0) {
       vector<char*> fNames;
       vector<char*> lNames;
@@ -181,13 +194,14 @@ int main () {
       char* temp;
       char* temp2;
       int number = 0;
-      char fileInput[10000];
-      char fileInput2[10000]; 
-      char fileName[25];
+      char fileInput[1000];
+      char fileInput2[1000]; 
+      char fileName[100];
+      //Takes in filenames for first and last names
       cout << "First File Name? \n"; 
-      cin.getline(fileName, 25);
+      cin.getline(fileName, 100);
       inFile.open(fileName);
-      inFile.getline(fileInput, 10000);
+      inFile.getline(fileInput, 1000);
       temp = strtok(fileInput, " ");
       while (temp != NULL) {
 	fNames.push_back(temp);
@@ -196,17 +210,19 @@ int main () {
       inFile.close(); 
       char fileName2[25];
       cout << "Second File Name? \n"; 
-      cin.getline(fileName2, 25);
+      cin.getline(fileName2, 100);
       inFile.open(fileName2);
-      inFile.getline(fileInput2, 10000); 
+      inFile.getline(fileInput2, 1000); 
       temp2 = strtok(fileInput2, " ");
       while (temp2 != NULL) { 
         lNames.push_back(temp2);
 	temp2 = strtok(NULL, " "); 
       }
-      inFile.close(); 
+      inFile.close();
+      //Students to be generated
       cout << "How many students? \n";
       cin >> number;
+      cin.get(); 
       for (int a = 0; a < number; a++) {
 	char* firstName = new char();
 	char* lastName = new char();
