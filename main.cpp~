@@ -8,6 +8,8 @@
 #include <vector>
 #include <fstream>
 #include <iomanip>
+#include <time.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -172,15 +174,82 @@ int main () {
 	}
       }
     }
-    else if (strcmp(input, "GEN") == 0) {
-
+    else if (strcmp(input, "GENERATE") == 0) {
+      vector<char*> fNames;
+      vector<char*> lNames;
+      ifstream inFile;
+      char* temp;
+      char* temp2;
+      int number = 0;
+      char fileInput[10000];
+      char fileInput2[10000]; 
+      char fileName[25];
+      cout << "First File Name? \n"; 
+      cin.getline(fileName, 25);
+      inFile.open(fileName);
+      inFile.getline(fileInput, 10000);
+      temp = strtok(fileInput, " ");
+      while (temp != NULL) {
+        cout << "testtest1";
+	fNames.push_back(temp);
+	temp = strtok(NULL, " "); 
+      }
+      inFile.close(); 
+      char fileName2[25];
+      cout << "Second File Name? \n"; 
+      cin.getline(fileName2, 25);
+      inFile.open(fileName2);
+      inFile.getline(fileInput2, 10000); 
+      temp2 = strtok(fileInput2, " ");
+      while (temp2 != NULL) {
+	cout << "testtest"; 
+        lNames.push_back(temp2);
+	temp2 = strtok(NULL, " "); 
+      }
+      inFile.close(); 
+      cout << "How many students? \n";
+      cin >> number;
+      for (int a = 0; a < number; a++) {
+	char* firstName = new char();
+	char* lastName = new char();
+	int fIndex = 0;
+	int lIndex = 0;
+	float randGPA = 0;
+	fIndex = rand() % fNames.size()+1;
+	lIndex = rand() % lNames.size()+1;
+	if (fIndex == 0) {
+	  fIndex = 1;
+	}
+	firstName = fNames.at(fIndex - 1);
+	lastName = lNames.at(lIndex - 1);
+	randGPA = ((double) rand() / (RAND_MAX)) * 4;
+        int lID = 0;
+        for (vector<int>::iterator it = IDs.begin(); it != IDs.end(); ++it) {
+	  if((*it) > lID) {
+	    lID = (*it); 
+	  }
+	}
+	IDs.push_back(lID + 1);
+	Student* temp = new Student();
+	temp -> fName = firstName;
+	temp -> lName = lastName;
+	temp -> GPA = randGPA;
+	temp -> ID = lID + 1;
+	int index = HVALUE(lID+1, size);
+	bool valid = ADD(hashTable, index, temp);
+	if (valid == false) {
+	  Node** newHash = new Node*[size*2];
+	  REHASH(newHash, hashTable, size);
+	  hashTable = newHash; 
+	}
+      }
     }
     else if (strcmp(input, "PRINT") == 0) {
       PRINT(hashTable, size); 
     }
     else if (strcmp(input, "DELETE") == 0) {
       int sID;
-      cout << "Enter Student's ID";
+      cout << "Enter Student's ID \n";
       cin >> sID;
       cin.get();
       IDs.push_back(sID);
